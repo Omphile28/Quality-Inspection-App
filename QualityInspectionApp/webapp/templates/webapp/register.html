@@ -1,0 +1,304 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - Inspection System</title>
+
+    <style>
+        :root {
+            --bg: #081321;
+            --panel: #111F32;
+            --panel-light: #16263C;
+            --border: #293D57;
+            --text: #F4F7FC;
+            --muted: #A9BBD3;
+            --blue: #168CFF;
+            --blue-dark: #0877E9;
+            --green: #20CF82;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at top right, #142d49 0%, transparent 45%),
+                linear-gradient(135deg, #081321, #0D1B2D);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+            color: var(--text);
+        }
+
+        .register-container {
+            background: linear-gradient(145deg, var(--panel-light), var(--panel));
+            width: 100%;
+            max-width: 700px;
+            padding: 40px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .header .logo {
+            font-size: 38px;
+            margin-bottom: 12px;
+        }
+
+        .header h1 {
+            color: var(--text);
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .header h1 span {
+            color: var(--blue);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            margin-bottom: 9px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #DCE8F8;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            background: #0B192B;
+            border: 1px solid #354B68;
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        input::placeholder {
+            color: #7188A5;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(22,140,255,0.15);
+        }
+
+        .create-btn {
+            margin-top: 30px;
+            width: 100%;
+            padding: 15px;
+            border: 1px solid var(--blue);
+            background: linear-gradient(90deg, var(--blue-dark), var(--blue));
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 9px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .create-btn:hover {
+            background: var(--green);
+            border-color: var(--green);
+            color: #081321;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(32,207,130,0.2);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: var(--blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            color: var(--green);
+            text-decoration: underline;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin-top: 25px;
+        }
+
+        @media(max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+
+            .register-container {
+                padding: 25px;
+            }
+        }
+
+        @media(max-width: 400px) {
+            body {
+                padding: 12px;
+            }
+
+            .register-container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="register-container">
+
+        <div class="header">
+
+            <div class="logo">🚘</div>
+
+            <h1>Create <span>Account</span></h1>
+
+            <p>Quality Inspection Management System</p>
+
+        </div>
+
+        <form method="POST">
+
+            <!-- Add {% csrf_token %} here when using Django -->
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <input
+                        type="text"
+                        id="first_name"
+                        name="first_name"
+                        placeholder="Enter first name"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="surname">Surname</label>
+                    <input
+                        type="text"
+                        id="surname"
+                        name="surname"
+                        placeholder="Enter surname"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_number">ID Number</label>
+                    <input
+                        type="text"
+                        id="id_number"
+                        name="id_number"
+                        maxlength="13"
+                        placeholder="13-digit ID number"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cellphone">Cell Phone Number</label>
+                    <input
+                        type="tel"
+                        id="cellphone"
+                        name="cellphone"
+                        placeholder="Enter phone number"
+                        required>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="email">Email Address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter email address"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Create password"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <input
+                        type="password"
+                        id="confirm_password"
+                        name="confirm_password"
+                        placeholder="Confirm password"
+                        required>
+                </div>
+
+            </div>
+
+            <a href="/welcome/" class="create-btn">
+                Continue to Welcome →
+            </a>
+
+            <div class="divider"></div>
+
+            <div class="login-link">
+                Already have an account?
+                <a href="#">Sign In</a>
+            </div>
+
+        </form>
+
+    </div>
+
+</body>
+</html>

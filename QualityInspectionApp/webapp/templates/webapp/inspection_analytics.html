@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quality Inspection Analytics</title>
+
+  <!-- Chart.js draws the dashboard charts; SheetJS creates the Excel workbook. -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #081321;
+      --panel: #111f32;
+      --panel-2: #16263c;
+      --border: #293d57;
+      --text: #f4f7fc;
+      --muted: #a9bbd3;
+      --blue: #168cff;
+      --green: #20cf82;
+      --red: #ff414b;
+      --orange: #ff941f;
+      --purple: #8760f5;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
+    button, select, input { font: inherit; }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 224px;
+      flex: 0 0 224px;
+      padding: 24px 14px;
+      background: #0b1727;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+    .brand {
+      padding: 4px 10px 30px;
+      border-bottom: 1px solid #1d3048;
+      margin-bottom: 24px;
+    }
+    .brand-mark { color: var(--green); font-size: 34px; font-weight: 800; }
+    .brand h2 { font-size: 17px; margin: 7px 0 4px; }
+    .brand p { color: var(--muted); font-size: 11px; margin: 0; }
+    .nav a {
+      display: flex;
+      gap: 13px;
+      align-items: center;
+      padding: 13px 14px;
+      margin: 5px 0;
+      color: #c4d2e6;
+      text-decoration: none;
+      border-radius: 9px;
+      font-size: 14px;
+    }
+    .nav a.active { background: linear-gradient(90deg, #0877e9, #168cff); color: white; }
+    .nav-icon { width: 22px; text-align: center; font-size: 18px; }
+
+    back-btn{
+
+    background:#168cff;
+
+    color:white !important;
+
+    font-weight:600;
+
+    border-left:4px solid #20cf82;
+    }
+
+    .back-btn:hover{
+
+    background:#0f7ae5;
+
+    transform:translateX(-3px);
+
+    transition:0.2s ease;
+
+    }
+    .sidebar-note { margin-top: auto; padding: 20px 10px 4px; color: #a9c6e9; font-style: italic; line-height: 1.5; }
+
+    main { min-width: 0; flex: 1; padding: 24px; }
+    .hero {
+      min-height: 135px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 26px;
+      margin-bottom: 18px;
+      background:
+        linear-gradient(90deg, rgba(8,19,33,.97), rgba(8,19,33,.75), rgba(8,19,33,.25)),
+        url("https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1800&q=85") center 53%/cover;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .hero h1 { margin: 0 0 8px; font-size: clamp(24px, 3vw, 38px); }
+    .hero p { color: #c4d7f0; margin: 0; }
+    .profile { text-align: right; color: #e8f0fb; white-space: nowrap; }
+    .profile small { display: block; color: var(--muted); margin-top: 9px; }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin: 16px 0 20px;
+    }
+    .filter-btn, .export-btn, .custom-date {
+      border: 1px solid #354b68;
+      background: #12233a;
+      color: #dce8f8;
+      padding: 11px 14px;
+      border-radius: 8px;
+    }
+    .filter-btn { cursor: pointer; }
+    .filter-btn.active { background: var(--blue); border-color: var(--blue); color: white; }
+    .custom-date { padding: 8px; }
+    .custom-date input { color: #eaf2ff; background: transparent; border: 0; }
+    .export-btn {
+      margin-left: auto;
+      cursor: pointer;
+      background: #079c58;
+      border-color: #16c779;
+      color: white;
+      font-weight: 700;
+    }
+    .export-btn:hover { background: #08b969; }
+
+    .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .card, .panel {
+      background: linear-gradient(145deg, var(--panel-2), var(--panel));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 8px 22px rgba(0,0,0,.12);
+    }
+    .kpi { min-height: 132px; padding: 19px; display: flex; align-items: center; gap: 15px; }
+    .kpi-icon {
+      width: 55px; height: 55px; flex: 0 0 55px; border-radius: 50%;
+      display: grid; place-items: center; font-size: 25px; font-weight: 800;
+    }
+    .blue { background: #0879e9; } .red { background: #e92f3b; }
+    .orange { background: #ef8614; } .green { background: #12b977; }
+    .kpi-label { color: #bdcce1; font-size: 14px; }
+    .kpi-value { font-size: 31px; font-weight: 800; margin: 7px 0 4px; }
+    .kpi-foot { color: var(--muted); font-size: 12px; }
+    .positive { color: var(--green); } .negative { color: #ff747b; }
+
+    .charts-top { display: grid; grid-template-columns: minmax(270px, .85fr) minmax(400px, 1.8fr); gap: 14px; margin-top: 16px; }
+    .charts-bottom { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 14px; margin-top: 14px; }
+    .panel { padding: 18px; min-width: 0; }
+    .panel h3 { margin: 0 0 16px; font-size: 17px; }
+    .panel h3 span { color: #39a8ff; margin-right: 8px; }
+    .chart-wrap { position: relative; height: 250px; }
+    .chart-wrap.short { height: 230px; }
+    .chart-wrap.doughnut { height: 235px; }
+    .inspector-list { display: grid; gap: 15px; }
+    .inspector-row { display: grid; grid-template-columns: 22px 1fr 34px; gap: 8px; align-items: center; font-size: 13px; }
+    .inspector-name { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+    .bar-track { height: 9px; background: #26364b; border-radius: 20px; overflow: hidden; }
+    .bar-fill { height: 100%; background: linear-gradient(90deg, #087bea, #28a8ff); border-radius: 20px; }
+    .table-panel { margin-top: 14px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 600px; }
+    th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid #2a3c54; font-size: 13px; }
+    th { color: #a9bbd3; font-weight: 600; }
+    td { color: #e4edf9; }
+    .status { display: inline-block; padding: 4px 8px; border-radius: 20px; font-size: 11px; }
+    .status.approved { color: #56e5a7; background: #123c35; }
+    .status.damaged { color: #ff9a9f; background: #48232d; }
+    .status.rejected { color: #ffc16f; background: #49331d; }
+    .footnote { color: #8298b5; font-size: 11px; margin: 12px 2px 0; }
+    .empty { color: var(--muted); padding: 20px 0; text-align: center; }
+
+    @media (max-width: 1100px) {
+      .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .charts-bottom { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .charts-bottom .panel:last-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 760px) {
+      .sidebar { width: 66px; flex-basis: 66px; padding: 18px 7px; }
+      .brand { padding: 0 4px 18px; text-align: center; }
+      .brand h2, .brand p, .nav a .nav-label, .sidebar-note { display: none; }
+      .brand-mark { font-size: 26px; }
+      .nav a { justify-content: center; padding: 13px 5px; }
+      main { padding: 14px; }
+      .hero { align-items: flex-start; flex-direction: column; }
+      .profile { text-align: left; }
+      .charts-top, .charts-bottom { grid-template-columns: 1fr; }
+      .charts-bottom .panel:last-child { grid-column: auto; }
+      .kpis { grid-template-columns: 1fr 1fr; gap: 9px; }
+      .kpi { padding: 12px; gap: 9px; min-height: 112px; }
+      .kpi-icon { width: 40px; height: 40px; flex-basis: 40px; font-size: 19px; }
+      .kpi-value { font-size: 24px; }
+      .export-btn { margin-left: 0; }
+    }
+    @media (max-width: 430px) {
+      .kpis { grid-template-columns: 1fr; }
+      .custom-date { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">🚘✓</div>
+      <h2>Quality Inspection</h2>
+      <p>Inspect · Ensure · Deliver</p>
+    </div>
+    <nav class="nav">
+<nav class="nav">
+    <a href="{% url 'welcome' %}" class="back-btn">
+
+        <span class="nav-icon">←</span>
+
+        <span class="nav-label">
+            Back to Dashboard
+        </span>
+
+    </a>
+</nav>
+    <div class="sidebar-note">Quality today...<br>Safer tomorrow.</div>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <div>
+        <h1>Quality Inspection Analytics</h1>
+        <p>Real-time insights into vehicle inspection performance</p>
+      </div>
+      <div class="profile">👤 Inspector Admin<small id="todayLabel">Inspection performance overview</small></div>
+    </header>
+
+    <section class="toolbar" aria-label="Analytics filters">
+      <button class="filter-btn active" data-range="today">▦ Today</button>
+      <button class="filter-btn" data-range="7">▦ Last 7 Days</button>
+      <button class="filter-btn" data-range="30">▦ Last 30 Days</button>
+      <label class="custom-date">From <input type="date" id="fromDate"></label>
+      <label class="custom-date">To <input type="date" id="toDate"></label>
+      <button class="filter-btn" id="applyCustom">Apply</button>
+      <button class="export-btn" id="exportExcel">⬇ Export to Excel</button>
+    </section>
+
+    <section class="kpis">
+      <article class="card kpi">
+        <div class="kpi-icon blue">🚘</div>
+        <div><div class="kpi-label">Total Inspected</div><div class="kpi-value" id="totalInspected">248</div><div class="kpi-foot"><span class="positive">↑ 12%</span> vs previous period</div></div>
+      </article>
+      <article class="card kpi">
+        <div class="kpi-icon red">⚠</div>
+        <div><div class="kpi-label">Damaged Cars</div><div class="kpi-value" id="damagedCars">23</div><div class="kpi-foot"><span class="negative">↑ 5%</span> vs previous period</div></div>
+      </article>
+      <article class="card kpi">
+        <div class="kpi-icon orange">✕</div>
+        <div><div class="kpi-label">Rejected Cars</div><div class="kpi-value" id="rejectedCars">17</div><div class="kpi-foot"><span class="positive">↓ 6%</span> vs previous period</div></div>
+      </article>
+      <article class="card kpi">
+        <div class="kpi-icon green">✓</div>
+        <div><div class="kpi-label">Approval Rate</div><div class="kpi-value" id="approvalRate">90.3%</div><div class="kpi-foot"><span class="positive">↑ 0.8%</span> vs previous period</div></div>
+      </article>
+    </section>
+
+    <section class="charts-top">
+      <article class="panel">
+        <h3><span>▥</span>Inspection Result Overview</h3>
+        <div class="chart-wrap doughnut"><canvas id="resultChart"></canvas></div>
+      </article>
+      <article class="panel">
+        <h3><span>◈</span>Inspections Trend</h3>
+        <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+      </article>
+    </section>
+
+    <section class="charts-bottom">
+      <article class="panel">
+        <h3><span>⌖</span>Inspections by Destination</h3>
+        <div class="chart-wrap short"><canvas id="destinationChart"></canvas></div>
+      </article>
+      <article class="panel">
+        <h3><span>⚒</span>Damage Types</h3>
+        <div class="chart-wrap short"><canvas id="damageChart"></canvas></div>
+      </article>
+      <article class="panel">
+        <h3><span>♟</span>Top Inspectors</h3>
+        <div class="inspector-list" id="inspectorList"></div>
+      </article>
+    </section>
+
+    <section class="panel table-panel">
+      <h3><span>▤</span>Recent Inspection Records</h3>
+      <table>
+        <thead><tr><th>Date</th><th>Inspector</th><th>Vehicle</th><th>Destination</th><th>Result</th></tr></thead>
+        <tbody id="recordsBody"></tbody>
+      </table>
+      <p class="footnote">Sample demonstration data only. Replace the JavaScript dataset with records from your application/database before using this dashboard operationally.</p>
+    </section>
+  </main>
+</div>
+
+<script>
+  // DEMO DATA: Replace these records with data returned by your backend/API.
+  // Each record represents one inspected vehicle.
+  const inspections = [
+    {date:"2026-11-12", inspector:"Thabo Mokoena", vehicle:"Toyota Corolla", destination:"Gauteng", result:"Approved", damageType:"None"},
+    {date:"2026-11-12", inspector:"Lerato Dlamini", vehicle:"VW Polo", destination:"KwaZulu-Natal", result:"Damaged", damageType:"Scratch"},
+    {date:"2026-11-12", inspector:"Sipho Mahlangu", vehicle:"Ford Ranger", destination:"Western Cape", result:"Approved", damageType:"None"},
+    {date:"2026-11-12", inspector:"Nomsa Khumalo", vehicle:"Hyundai i20", destination:"Eastern Cape", result:"Rejected", damageType:"Cracked Glass"},
+    {date:"2026-11-12", inspector:"James Ncube", vehicle:"BMW 320i", destination:"Gauteng", result:"Approved", damageType:"None"},
+    {date:"2026-11-11", inspector:"Thabo Mokoena", vehicle:"Isuzu D-Max", destination:"Free State", result:"Damaged", damageType:"Dent"},
+    {date:"2026-11-11", inspector:"Lerato Dlamini", vehicle:"Kia Picanto", destination:"Gauteng", result:"Approved", damageType:"None"},
+    {date:"2026-11-11", inspector:"Sipho Mahlangu", vehicle:"Nissan Navara", destination:"KwaZulu-Natal", result:"Rejected", damageType:"Scratch"},
+    {date:"2026-11-10", inspector:"Nomsa Khumalo", vehicle:"Mercedes-Benz C-Class", destination:"Western Cape", result:"Approved", damageType:"None"},
+    {date:"2026-11-10", inspector:"James Ncube", vehicle:"Suzuki Swift", destination:"Other", result:"Damaged", damageType:"Other"},
+    {date:"2026-11-09", inspector:"Thabo Mokoena", vehicle:"Toyota Hilux", destination:"Gauteng", result:"Approved", damageType:"None"},
+    {date:"2026-11-09", inspector:"Lerato Dlamini", vehicle:"VW T-Cross", destination:"Eastern Cape", result:"Damaged", damageType:"Dent"},
+    {date:"2026-11-08", inspector:"Sipho Mahlangu", vehicle:"Ford EcoSport", destination:"Free State", result:"Approved", damageType:"None"},
+    {date:"2026-11-08", inspector:"Nomsa Khumalo", vehicle:"Renault Kwid", destination:"KwaZulu-Natal", result:"Rejected", damageType:"Cracked Glass"},
+    {date:"2026-11-07", inspector:"James Ncube", vehicle:"Audi A3", destination:"Western Cape", result:"Approved", damageType:"None"},
+    {date:"2026-11-06", inspector:"Thabo Mokoena", vehicle:"Toyota Fortuner", destination:"Gauteng", result:"Damaged", damageType:"Scratch"},
+    {date:"2026-11-05", inspector:"Lerato Dlamini", vehicle:"Mazda CX-5", destination:"Other", result:"Approved", damageType:"None"},
+    {date:"2026-11-04", inspector:"Sipho Mahlangu", vehicle:"Honda Amaze", destination:"Eastern Cape", result:"Approved", damageType:"None"},
+    {date:"2026-11-03", inspector:"Nomsa Khumalo", vehicle:"Nissan Almera", destination:"Gauteng", result:"Rejected", damageType:"Dent"},
+    {date:"2026-11-02", inspector:"James Ncube", vehicle:"Volvo XC40", destination:"KwaZulu-Natal", result:"Approved", damageType:"None"}
+  ];
+
+  const $ = id => document.getElementById(id);
+  const palette = { blue:"#168cff", green:"#20cf82", red:"#ff414b", orange:"#ff941f", purple:"#8760f5", grey:"#9aacc4" };
+  const commonOptions = {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ labels:{ color:"#e5eefb", padding:14, usePointStyle:true } } }
+  };
+
+  let resultChart, trendChart, destinationChart, damageChart;
+  let filteredRecords = [...inspections];
+
+  function localISO(date) {
+    const y = date.getFullYear(), m = String(date.getMonth()+1).padStart(2,"0"), d = String(date.getDate()).padStart(2,"0");
+    return `${y}-${m}-${d}`;
+  }
+  function dateOffset(daysAgo) {
+    const d = new Date(); d.setDate(d.getDate()-daysAgo); return localISO(d);
+  }
+  function setRange(range) {
+    const today = new Date();
+    let start = new Date(today);
+    if (range === "today") start = new Date(today);
+    else start.setDate(today.getDate()-Number(range)+1);
+    $("fromDate").value = localISO(start);
+    $("toDate").value = localISO(today);
+    document.querySelectorAll(".filter-btn[data-range]").forEach(b => b.classList.toggle("active", b.dataset.range===String(range)));
+    applyFilters();
+  }
+
+  function countBy(records, key, values) {
+    return values.map(value => records.filter(r => r[key]===value).length);
+  }
+  function countResult(records, result) {
+    return records.filter(r => r.result===result).length;
+  }
+  function makeChart(canvasId, type, data, options) {
+    return new Chart($(canvasId), {type, data, options});
+  }
+  function destroyCharts() {
+    [resultChart,trendChart,destinationChart,damageChart].forEach(c => { if(c) c.destroy(); });
+  }
+
+  function renderDashboard(records) {
+    filteredRecords = records;
+    const total = records.length;
+    const damaged = countResult(records,"Damaged");
+    const rejected = countResult(records,"Rejected");
+    const approved = countResult(records,"Approved");
+    const approval = total ? (approved/total*100).toFixed(1) : "0.0";
+
+    $("totalInspected").textContent = total;
+    $("damagedCars").textContent = damaged;
+    $("rejectedCars").textContent = rejected;
+    $("approvalRate").textContent = approval + "%";
+
+    const destinations = ["Gauteng","KwaZulu-Natal","Western Cape","Eastern Cape","Free State","Other"];
+    const damageTypes = ["Scratch","Dent","Cracked Glass","Other"];
+    const damageCounts = damageTypes.map(type => records.filter(r => r.damageType===type).length);
+
+    // Group records by date for the trend chart.
+    const days = [...new Set(records.map(r=>r.date))].sort();
+    const dailyTotal = days.map(day => records.filter(r=>r.date===day).length);
+    const dailyApproved = days.map(day => records.filter(r=>r.date===day && r.result==="Approved").length);
+    const dailyDamaged = days.map(day => records.filter(r=>r.date===day && r.result==="Damaged").length);
+    const dailyRejected = days.map(day => records.filter(r=>r.date===day && r.result==="Rejected").length);
+
+    destroyCharts();
+    resultChart = makeChart("resultChart","doughnut",{
+      labels:["Approved","Damaged","Rejected"],
+      datasets:[{data:[approved,damaged,rejected],backgroundColor:[palette.green,palette.red,palette.grey],borderWidth:0,hoverOffset:8}]
+    },{...commonOptions,cutout:"62%",plugins:{...commonOptions.plugins,legend:{position:"bottom",labels:{color:"#e5eefb",padding:14,usePointStyle:true}}}});
+
+    trendChart = makeChart("trendChart","line",{
+      labels:days.map(d=>d.slice(5)),
+      datasets:[
+        {label:"Inspected",data:dailyTotal,borderColor:palette.blue,backgroundColor:palette.blue,tension:.35,borderWidth:3},
+        {label:"Approved",data:dailyApproved,borderColor:palette.green,backgroundColor:palette.green,tension:.35,borderWidth:2},
+        {label:"Damaged",data:dailyDamaged,borderColor:palette.red,backgroundColor:palette.red,tension:.35,borderWidth:2},
+        {label:"Rejected",data:dailyRejected,borderColor:palette.orange,backgroundColor:palette.orange,tension:.35,borderWidth:2}
+      ]
+    },{...commonOptions,scales:{x:{ticks:{color:"#c5d3e6"},grid:{color:"#2a3c54"}},y:{beginAtZero:true,ticks:{color:"#c5d3e6",precision:0},grid:{color:"#2a3c54"}}}});
+
+    destinationChart = makeChart("destinationChart","bar",{
+      labels:destinations,
+      datasets:[{label:"Vehicles",data:countBy(records,"destination",destinations),backgroundColor:palette.blue,borderRadius:5}]
+    },{...commonOptions,indexAxis:"y",plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{color:"#c5d3e6",precision:0},grid:{color:"#2a3c54"}},y:{ticks:{color:"#c5d3e6"},grid:{display:false}}}});
+
+    damageChart = makeChart("damageChart","pie",{
+      labels:damageTypes,
+      datasets:[{data:damageCounts,backgroundColor:[palette.blue,palette.orange,palette.purple,palette.green],borderWidth:0}]
+    },{...commonOptions,plugins:{legend:{position:"bottom",labels:{color:"#e5eefb",padding:12,usePointStyle:true}}}});
+
+    renderInspectors(records);
+    renderRecords(records);
+  }
+
+  function renderInspectors(records) {
+    const counts = {};
+    records.forEach(r => counts[r.inspector]=(counts[r.inspector]||0)+1);
+    const ranked = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    const max = Math.max(1,...ranked.map(x=>x[1]));
+    $("inspectorList").innerHTML = ranked.length ? ranked.map(([name,count],i)=>`
+      <div class="inspector-row">
+        <strong>${i+1}</strong>
+        <div><div class="inspector-name"><span>${escapeHTML(name)}</span></div><div class="bar-track"><div class="bar-fill" style="width:${count/max*100}%"></div></div></div>
+        <strong>${count}</strong>
+      </div>`).join("") : '<div class="empty">No inspector data for this period.</div>';
+  }
+
+  function renderRecords(records) {
+    const recent = [...records].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
+    $("recordsBody").innerHTML = recent.length ? recent.map(r=>{
+      const cls = r.result.toLowerCase();
+      return `<tr><td>${r.date}</td><td>${escapeHTML(r.inspector)}</td><td>${escapeHTML(r.vehicle)}</td><td>${escapeHTML(r.destination)}</td><td><span class="status ${cls}">${r.result}</span></td></tr>`;
+    }).join("") : '<tr><td colspan="5" class="empty">No inspection records match this date range.</td></tr>';
+  }
+
+  function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  }
+
+  function applyFilters() {
+    const from = $("fromDate").value, to = $("toDate").value;
+    if(from && to && from>to) { alert("The start date must be before the end date."); return; }
+    const records = inspections.filter(r => (!from || r.date>=from) && (!to || r.date<=to));
+    renderDashboard(records);
+  }
+
+  function exportExcel() {
+    if(typeof XLSX === "undefined") {
+      alert("The Excel export library could not load. Check your internet connection and try again.");
+      return;
+    }
+    const records = filteredRecords;
+    const total = records.length;
+    const approved = countResult(records,"Approved");
+    const damaged = countResult(records,"Damaged");
+    const rejected = countResult(records,"Rejected");
+    const summary = [
+      ["Quality Inspection Analytics"],
+      ["Report generated", new Date().toLocaleString()],
+      ["Date from", $("fromDate").value || "All dates"],
+      ["Date to", $("toDate").value || "All dates"],
+      [],
+      ["Metric","Value"],
+      ["Total inspected",total],
+      ["Approved",approved],
+      ["Damaged",damaged],
+      ["Rejected",rejected],
+      ["Approval rate",total ? `${(approved/total*100).toFixed(1)}%` : "0.0%"]
+    ];
+    const destinationSummary = [["Destination","Vehicles inspected"]];
+    [...new Set(records.map(r=>r.destination))].sort().forEach(destination => {
+      destinationSummary.push([destination,records.filter(r=>r.destination===destination).length]);
+    });
+    const inspectorSummary = [["Inspector","Vehicles inspected","Damaged","Rejected"]];
+    [...new Set(records.map(r=>r.inspector))].sort().forEach(inspector => {
+      const own = records.filter(r=>r.inspector===inspector);
+      inspectorSummary.push([inspector,own.length,countResult(own,"Damaged"),countResult(own,"Rejected")]);
+    });
+    const detailRows = [["Date","Inspector","Vehicle","Destination","Result","Damage type"]];
+    records.forEach(r=>detailRows.push([r.date,r.inspector,r.vehicle,r.destination,r.result,r.damageType]));
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(summary),"Summary");
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(destinationSummary),"By Destination");
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(inspectorSummary),"By Inspector");
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(detailRows),"Inspection Records");
+    XLSX.writeFile(wb,`Quality_Inspection_Analytics_${localISO(new Date())}.xlsx`);
+  }
+
+  document.querySelectorAll(".filter-btn[data-range]").forEach(button => {
+    button.addEventListener("click",()=>setRange(button.dataset.range));
+  });
+  $("applyCustom").addEventListener("click",applyFilters);
+  $("exportExcel").addEventListener("click",exportExcel);
+
+  $("todayLabel").textContent = new Date().toLocaleDateString(undefined,{weekday:"short",day:"2-digit",month:"short",year:"numeric"});
+  // Start with today's date. Demo records are dated to match the example dashboard.
+  $("fromDate").value = "2026-11-12";
+  $("toDate").value = "2026-11-12";
+  renderDashboard(inspections.filter(r=>r.date==="2026-11-12"));
+</script>
+</body>
+</html>

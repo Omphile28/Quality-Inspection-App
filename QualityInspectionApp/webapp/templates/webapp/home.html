@@ -1,0 +1,254 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quality Inspection App - Login</title>
+
+    <style>
+        :root {
+            --bg: #081321;
+            --panel: #111F32;
+            --panel-light: #16263C;
+            --border: #293D57;
+            --text: #F4F7FC;
+            --muted: #A9BBD3;
+            --blue: #168CFF;
+            --blue-dark: #0877E9;
+            --green: #20CF82;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at top right, #142d49 0%, transparent 45%),
+                linear-gradient(135deg, var(--bg), #0D1B2D);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--text);
+        }
+
+        .login-container {
+            background: linear-gradient(
+                145deg,
+                var(--panel-light),
+                var(--panel)
+            );
+            width: 100%;
+            max-width: 420px;
+            padding: 40px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+            text-align: center;
+        }
+
+        .logo {
+            width: 120px;
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+            object-fit: contain;
+        }
+
+        h2 {
+            color: var(--text);
+            font-size: 25px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .subtitle span {
+            color: var(--blue);
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin-bottom: 22px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 9px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #DCE8F8;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px;
+            background: #0B192B;
+            border: 1px solid #354B68;
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        .input-group input::placeholder {
+            color: #8298B5;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(22,140,255,0.15);
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border: 1px solid transparent;
+            border-radius: 9px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
+            text-decoration: none;
+            transition: 0.3s ease;
+        }
+
+        .login-btn {
+            background: linear-gradient(
+                90deg,
+                var(--blue-dark),
+                var(--blue)
+            );
+            color: white;
+            border-color: var(--blue);
+        }
+
+        .login-btn:hover {
+            background: var(--green);
+            border-color: var(--green);
+            color: #081321;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(32,207,130,0.2);
+        }
+
+        .register-btn {
+            background: #16263C;
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        .register-btn:hover {
+            background: #203650;
+            color: var(--text);
+            border-color: var(--blue);
+            transform: translateY(-2px);
+        }
+
+        .footer-text {
+            margin-top: 25px;
+            color: #8298B5;
+            font-size: 12px;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin-top: 25px;
+        }
+
+        @media(max-width: 480px) {
+            .login-container {
+                padding: 28px 22px;
+            }
+
+            h2 {
+                font-size: 22px;
+            }
+
+            .logo {
+                width: 100px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <img
+            src="{% static 'images/logo.png' %}"
+            alt="Quality Inspection Logo"
+            class="logo"
+        >
+
+        <h2>Quality Inspection</h2>
+
+        <p class="subtitle">
+            Management <span>System</span>
+        </p>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="input-group">
+                <label for="employee_code">Employee Code</label>
+
+                <input
+                    type="text"
+                    id="employee_code"
+                    name="employee_code"
+                    placeholder="Enter Employee Code"
+                    autocomplete="username"
+                    required
+                >
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter Password"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn login-btn">
+                Welcome →
+            </button>
+
+        </form>
+
+        <div class="divider"></div>
+
+        <a href="/register/" class="btn register-btn">
+            Create an Account
+        </a>
+
+        <p class="footer-text">
+            Quality Inspection Management System
+        </p>
+
+    </div>
+
+</body>
+</html>

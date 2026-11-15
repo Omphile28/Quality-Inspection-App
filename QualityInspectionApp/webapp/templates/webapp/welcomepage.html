@@ -1,0 +1,396 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quality Inspection Dashboard</title>
+
+<style>
+:root {
+    --bg: #081321;
+    --panel: #111F32;
+    --panel-light: #16263C;
+    --border: #293D57;
+    --text: #F4F7FC;
+    --muted: #A9BBD3;
+    --blue: #168CFF;
+    --blue-dark: #0877E9;
+    --green: #20CF82;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background:
+        linear-gradient(rgba(8,19,33,0.88), rgba(8,19,33,0.94)),
+        url("{% static 'images/Background.jpeg' %}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: var(--text);
+}
+
+/* HEADER */
+
+.top-bar {
+    background: linear-gradient(90deg, #111F32, #162B45);
+    color: var(--text);
+    padding: 18px 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+.company-info {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.logo {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+.company-text h2 {
+    font-size: 26px;
+    color: var(--text);
+}
+
+.company-text p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.inspector-info {
+    text-align: right;
+    line-height: 1.9;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.inspector-info strong {
+    color: var(--text);
+}
+
+/* MAIN CONTENT */
+
+.container {
+    max-width: 1400px;
+    margin: auto;
+    padding: 45px 35px;
+}
+
+.dashboard-header {
+    text-align: center;
+    margin-bottom: 50px;
+    padding: 25px;
+    background: rgba(17,31,50,0.75);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    backdrop-filter: blur(8px);
+}
+
+.dashboard-header h1 {
+    color: var(--text);
+    font-size: 38px;
+    margin-bottom: 12px;
+}
+
+.dashboard-header h1 span {
+    color: var(--blue);
+}
+
+.dashboard-header p {
+    font-size: 16px;
+    color: var(--muted);
+}
+
+/* SELECTION CARDS */
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+}
+
+.card-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    border-radius: 15px;
+    height: 100%;
+}
+
+.card {
+    height: 100%;
+    min-height: 210px;
+    background: linear-gradient(
+        145deg,
+        rgba(22,38,60,0.97),
+        rgba(17,31,50,0.97)
+    );
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 30px 25px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    transition: 0.3s ease;
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: translateY(-7px);
+    border-color: var(--blue);
+    box-shadow: 0 12px 30px rgba(22,140,255,0.15);
+    background: linear-gradient(
+        145deg,
+        #1B3452,
+        #142941
+    );
+}
+
+.card h3 {
+    color: var(--blue);
+    margin-bottom: 18px;
+    font-size: 21px;
+    line-height: 1.4;
+}
+
+.card ul {
+    margin-left: 20px;
+    color: var(--muted);
+    line-height: 2;
+}
+
+.card p {
+    color: var(--muted);
+    line-height: 1.8;
+    font-size: 14px;
+}
+
+.card li::marker {
+    color: var(--green);
+}
+
+/* LOGOUT */
+
+.bottom-bar {
+    margin-top: 55px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.logout-btn {
+    background: linear-gradient(90deg, var(--blue-dark), var(--blue));
+    color: white;
+    border: 1px solid var(--blue);
+    padding: 14px 35px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    transition: 0.3s ease;
+}
+
+.logout-btn:hover {
+    background: var(--green);
+    border-color: var(--green);
+    color: #081321;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(32,207,130,0.2);
+}
+
+/* RESPONSIVE DESIGN */
+
+@media(max-width: 1200px) {
+    .card-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media(max-width: 768px) {
+    .top-bar {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+
+    .company-info {
+        flex-direction: column;
+    }
+
+    .inspector-info {
+        text-align: center;
+    }
+
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-header h1 {
+        font-size: 29px;
+    }
+
+    .container {
+        padding: 30px 20px;
+    }
+}
+
+@media(max-width: 400px) {
+    .top-bar {
+        padding: 20px;
+    }
+
+    .company-text h2 {
+        font-size: 22px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 25px;
+    }
+
+    .card {
+        padding: 25px 20px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- TOP HEADER -->
+
+<div class="top-bar">
+
+    <div class="company-info">
+
+        <div class="logo">
+            LOGO
+        </div>
+
+        <div class="company-text">
+            <h2>Quality Assurance</h2>
+            <p>Moving Business Further</p>
+        </div>
+
+    </div>
+
+    <div class="inspector-info">
+        <strong>Quality Inspector:</strong> John Smith<br>
+        <strong>Employee Card Nr:</strong> EMP-45872
+    </div>
+
+</div>
+
+<!-- DASHBOARD CONTENT -->
+
+<div class="container">
+
+    <div class="dashboard-header">
+
+        <h1>Quality Inspection <span>Dashboard</span></h1>
+
+        <p>
+            Ensuring Excellence Across All Industry Operations
+        </p>
+
+    </div>
+
+    <!-- SELECTION CARDS -->
+
+    <div class="card-grid">
+
+        <a href="{% url 'inspectionlist' %}" class="card-link">
+            <div class="card">
+
+                <h3>Quality Inspection</h3>
+
+                <ul>
+                    <li>F2 Inspection</li>
+                </ul>
+
+            </div>
+        </a>
+
+        <a href="{% url 'records' %}" class="card-link">
+            <div class="card">
+
+                <h3>Inspection Records</h3>
+
+                <p>
+                    Search and review inspection records,
+                    validate completed inspections,
+                    identify quality concerns
+                    and monitor corrective actions.
+                </p>
+
+            </div>
+        </a>
+
+        <a href="{% url 'analytics' %}" class="card-link">
+            <div class="card">
+
+                <h3>Inspection Analytics</h3>
+
+                <p>
+                    View statistics, quality trends,
+                    inspection performance,
+                    pass/fail results and
+                    operational dashboards.
+                </p>
+
+            </div>
+        </a>
+
+        <a href="{% url 'regulations' %}" class="card-link">
+            <div class="card">
+
+                <h3>Quality Regulations & Standards</h3>
+
+                <ul>
+                    <li>ISO 9001 Quality Standards</li>
+                    <li>Quality Procedures</li>
+                    <li>Safety Regulations</li>
+                </ul>
+
+            </div>
+        </a>
+
+    </div>
+
+    <!-- LOGOUT -->
+
+    <div class="bottom-bar">
+
+        <button type="button" class="logout-btn">
+            Logout
+        </button>
+
+    </div>
+
+</div>
+
+</body>
+</html>
