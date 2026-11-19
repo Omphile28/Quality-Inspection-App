@@ -31,8 +31,11 @@ _Authentication Module_
   - User profile information display
   - Logout functionality
 
+<img width="442" height="602" alt="2" src="https://github.com/user-attachments/assets/d81d023c-ec14-46da-a32c-728baee4ee1f" />
+<img width="725" height="649" alt="employee code" src="https://github.com/user-attachments/assets/6f474ffa-bae1-4ee2-9bc3-67f957892009" />
 
-_Quality Inspection Dashboard_
+
+Quality Inspection Dashboard
 
 The dashboard acts as the central navigation hub of the application.
 
@@ -44,6 +47,9 @@ The dashboard acts as the central navigation hub of the application.
   - Quality Regulations & Standards
   - Inspector information display
   - Responsive design for desktop and mobile devices
+    
+<img width="1527" height="682" alt="3" src="https://github.com/user-attachments/assets/29150331-9bb2-44ca-a72c-208cac949345" />
+
 
 
 _F2 Damage Inspection Module_
@@ -52,24 +58,10 @@ The F2 Damage Inspection form allows inspectors to perform vehicle inspections.
 
 Captured information includes:
 
-  - Vehicle Information
-  - Vehicle VIN Number
-  - Battery Percentage
-  - Number of Keys
-  - Number of Key Cards
-  - Destination
-  - Inspection Checklist
-  - Door Protection Strip
-  - Tow Hook & Covers
-  - Interior Carpet Footprint
-  - Front Passenger Seat Covers
-  - Weekly Battery Identifier
-  - BI Pack
-  - Floor Carpets
-  - Tyre Repair Kit
-  - Lock Nut
-  - Charging Cable G45
-  - Number Plate Carrier
+<img width="826" height="306" alt="1" src="https://github.com/user-attachments/assets/573136a6-7b0e-4e8d-8ecd-4a61e0991e65" />
+
+Including: 
+
   - Damage Reporting
   - Damage Identification
   - Damage Comments
@@ -92,6 +84,7 @@ Users can:
   - View PDF reports
   - Download inspection documentation
   - Review historical inspection activities
+<img width="1534" height="724" alt="Records" src="https://github.com/user-attachments/assets/9310f1fc-79cd-47f7-9f21-191cbbdaca61" />
 
 
 _Analytics Dashboard_
@@ -117,6 +110,7 @@ The analytics system provides management insights through:
   - Data Export
   - Excel Spreadsheet Export (.xlsx)
   - Multiple report sheets generated automatically
+<img width="1498" height="713" alt="analytics" src="https://github.com/user-attachments/assets/f9292fbd-ae86-4df7-8178-ca7899a0f800" />
 
 Powered using:
 
@@ -139,6 +133,7 @@ Central document management section containing:
   - Download PDF
   - Version Tracking
   - Compliance Documentation Management
+<img width="1468" height="673" alt="Regulations" src="https://github.com/user-attachments/assets/27f75840-0469-4915-9433-351a96bd1caa" />
 
 
 _System Architecture_
