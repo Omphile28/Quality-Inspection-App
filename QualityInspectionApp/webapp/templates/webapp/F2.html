@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,140 +8,328 @@
 <title>F2 Damage Inspection List</title>
 
 <style>
-
-body{
-    font-family:Baskerville Old Face,sans-serif;
-    background:#f4f6f9;
-    padding:20px;
+:root {
+    --navy: #071a2e;
+    --navy-light: #102c49;
+    --blue: #087df1;
+    --blue-light: #b9d9ff;
+    --white: #ffffff;
+    --green: #08a95b;
+    --red: #d52b3a;
+    --border: rgba(153, 194, 235, .3);
 }
 
-.container{
-    max-width:1200px;
-    margin:auto;
-    background:white;
-    padding:30px;
-    border-radius:12px;
+* {
+    box-sizing: border-box;
 }
 
-h1{
-    color:#003B71;
+body {
+    margin: 0;
+    padding: 30px 18px;
+    font-family: "Baskerville Old Face", Baskerville, serif;
+    color: var(--white);
+    background: var(--navy);
+    min-height: 100vh;
+    position: relative;
 }
 
-.form-group{
-    margin-bottom:15px;
+/* BMW background image and faded overlay */
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background:
+        url("BMW-X3-G45-background.jpg")
+        center center / cover no-repeat;
+    opacity: .32;
 }
 
-label{
-    display:block;
-    margin-bottom:5px;
-    font-weight:bold;
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+        110deg,
+        rgba(3, 15, 29, .96),
+        rgba(5, 25, 46, .83),
+        rgba(7, 29, 52, .65)
+    );
 }
 
-input,
+.container {
+    max-width: 1250px;
+    margin: auto;
+    padding: 35px;
+    background: rgba(7, 26, 46, .88);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 15px 45px rgba(0,0,0,.35);
+    backdrop-filter: blur(10px);
+}
+
+/* Header */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 22px;
+    margin-bottom: 28px;
+}
+
+h1 {
+    color: white;
+    font-size: 34px;
+    margin: 0 0 8px;
+}
+
+.subtitle {
+    color: var(--blue-light);
+    font-size: 17px;
+}
+
+.employee-info {
+    text-align: right;
+    line-height: 1.8;
+    color: #d7e9ff;
+    font-size: 15px;
+}
+
+.employee-info strong {
+    color: white;
+}
+
+.back-btn {
+    display: inline-block;
+    margin-bottom: 25px;
+    padding: 11px 22px;
+    background: var(--blue);
+    color: white;
+    text-decoration: none;
+    border-radius: 7px;
+    font-weight: bold;
+}
+
+.back-btn:hover {
+    background: #3295ff;
+}
+
+/* Form */
+
+h2, h3 {
+    color: var(--blue-light);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.form-group {
+    margin-bottom: 17px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #e7f1ff;
+}
+
+input:not([type="checkbox"]):not([type="file"]),
 select,
-textarea{
-    width:100%;
-    padding:10px;
-    border:1px solid #ccc;
-    border-radius:6px;
+textarea {
+    width: 100%;
+    padding: 12px;
+    background: rgba(20, 48, 75, .9);
+    color: white;
+    border: 1px solid #426487;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 15px;
 }
 
-.checklist{
-    margin-top:20px;
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 2px solid var(--blue);
+    border-color: var(--blue);
 }
 
-.checklist label{
-    display:block;
-    font-weight:normal;
-    margin-bottom:10px;
+select option {
+    background: var(--navy);
 }
+
+input[type="file"] {
+    color: #d7e9ff;
+    max-width: 100%;
+}
+
+textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    accent-color: var(--blue);
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+/* Checklist */
+
+.checklist {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 18px 0 25px;
+    padding: 22px;
+    background: rgba(16, 44, 73, .75);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+}
+
+.checklist label {
+    font-weight: normal;
+    margin: 0;
+    color: #e5efff;
+}
+
+/* Damage and approval sections */
 
 #damageSection,
-#leaderSection{
-    display:none;
-    margin-top:20px;
-    padding:20px;
-    background:#FFF8E1;
-    border-radius:8px;
+#leaderSection {
+    display: none;
+    margin-top: 20px;
+    padding: 22px;
+    background: rgba(34, 53, 74, .95);
+    border: 1px solid #547394;
+    border-radius: 9px;
 }
 
-.button-bar{
-    display:flex;
-    justify-content:space-between;
-    margin-top:30px;
+#damageSection {
+    border-left: 4px solid #e5a42c;
 }
 
-.btn{
-    border:none;
-    padding:12px 25px;
-    color:white;
-    cursor:pointer;
-    border-radius:6px;
+#leaderSection {
+    border-left: 4px solid var(--green);
 }
 
-.end-btn{
-    background:#C62828;
+/* Buttons */
+
+.button-bar {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 30px;
 }
 
-.next-btn{
-    background:#2E7D32;
-}
-.back-btn{
-
-    display:inline-block;
-
-    margin-bottom:30px;
-
-    background:#6c757d;
-
-    color:white;
-
-    text-decoration:none;
-
-    padding:12px 25px;
-
-    border-radius:8px;
+.btn {
+    border: none;
+    padding: 13px 28px;
+    color: white;
+    cursor: pointer;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: bold;
+    transition: .2s;
 }
 
-.back-btn:hover{
-    background:#555;
+.btn:hover {
+    filter: brightness(1.15);
+    transform: translateY(-1px);
 }
 
-#inspectionTable{
-    display:none;
-    margin-top:40px;
+.end-btn {
+    background: var(--red);
 }
 
-table{
-    width:100%;
-    border-collapse:collapse;
+.next-btn {
+    background: var(--green);
 }
 
-th{
-    background:#003B71;
-    color:white;
+/* Records */
+
+#inspectionTable {
+    display: none;
+    margin-top: 45px;
+    overflow-x: auto;
 }
 
-th,td{
-    border:1px solid #ddd;
-    padding:10px;
-    text-align:center;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 850px;
 }
 
-.damage-row{
-    background:yellow;
+th {
+    background: #123d66;
+    color: white;
 }
 
-.reject-row{
-    background:red;
-    color:white;
+th, td {
+    border: 1px solid var(--border);
+    padding: 13px;
+    text-align: center;
 }
 
-.employee-info{
-    text-align:right;
-    margin-bottom:20px;
+td {
+    background: rgba(9, 31, 53, .85);
 }
 
+.damage-row td {
+    background: rgba(190, 135, 20, .28);
+}
+
+.reject-row td {
+    background: rgba(190, 25, 40, .45);
+}
+
+.notice {
+    color: var(--blue-light);
+    margin-top: 15px;
+}
+
+@media(max-width: 700px) {
+    body {
+        padding: 12px;
+    }
+
+    .container {
+        padding: 20px 15px;
+    }
+
+    h1 {
+        font-size: 27px;
+    }
+
+    .form-grid,
+    .checklist {
+        grid-template-columns: 1fr;
+    }
+
+    .employee-info {
+        text-align: left;
+    }
+
+    .button-bar {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}
 </style>
 </head>
 
@@ -148,131 +337,154 @@ th,td{
 
 <div class="container">
 
-<div class="employee-info">
+<a href="{% url 'welcome' %}" class="back-btn">← Back</a>
 
-<b>Name:</b> John Smith<br>
-<b>Employee Card Nr:</b> EMP10001<br>
-<b>Date:</b> <span id="today"></span>
+<div class="header">
+
+    <div>
+        <h1>F2 Damage Inspection List</h1>
+        <div class="subtitle">
+            Vehicle Quality Inspection · Inspect · Ensure · Deliver
+        </div>
+    </div>
+
+    <div class="employee-info">
+        <strong>Name:</strong>
+        <span id="inspectorName">Inspector Name</span><br>
+
+        <strong>Inspector:</strong>
+        <span id="inspectorNumber">Inspector Number</span><br>
+
+        <strong>Date:</strong>
+        <span id="today"></span>
+    </div>
 
 </div>
-
-<h1>F2 Damage Inspection List</h1>
 
 <form id="inspectionForm">
 
-<div class="form-group">
-<label>Vehicle VIN Number</label>
-<input type="text" id="vin" required>
+<h2>Vehicle Information</h2>
+
+<div class="form-grid">
+
+    <div class="form-group">
+        <label>Vehicle VIN Number *</label>
+        <input type="text" id="vin" required>
+    </div>
+
+    <div class="form-group">
+        <label>Battery %</label>
+        <input type="number" id="battery" min="0" max="100">
+    </div>
+
+    <div class="form-group">
+        <label>Number of Keys</label>
+        <input type="number" id="keys" min="0">
+    </div>
+
+    <div class="form-group">
+        <label>Number of Key Cards</label>
+        <input type="number" id="cards" min="0">
+    </div>
+
+    <div class="form-group">
+        <label>Destination</label>
+        <input type="text" id="destination">
+    </div>
+
 </div>
 
-<div class="form-group">
-<label>Battery %</label>
-<input type="number" id="battery">
-</div>
-
-<div class="form-group">
-<label>Number of Keys</label>
-<input type="number" id="keys">
-</div>
-
-<div class="form-group">
-<label>Number of Key Cards</label>
-<input type="number" id="cards">
-</div>
-
-<div class="form-group">
-<label>Destination</label>
-<input type="text" id="destination">
-</div>
-
-<h3>Inspection Checklist</h3>
+<h2>Inspection Checklist</h2>
 
 <div class="checklist">
 
-<label><input type="checkbox"> Door Protection Strip</label>
-<label><input type="checkbox"> Tow Hook & Covers</label>
-<label><input type="checkbox"> Interior Carpet Footprint</label>
-<label><input type="checkbox"> Front Passenger Seat Covers</label>
-<label><input type="checkbox"> Weekly Battery Identifier</label>
-<label><input type="checkbox"> BI Pack</label>
-<label><input type="checkbox"> Floor Carpets</label>
-<label><input type="checkbox"> Tyre Repair Kit</label>
-<label><input type="checkbox"> Lock Nut</label>
-<label><input type="checkbox"> Charging Cable G45</label>
-<label><input type="checkbox"> Number Plate Carrier</label>
+    <label><input type="checkbox" name="checklist" value="Door Protection Strip"> Door Protection Strip</label>
+
+    <label><input type="checkbox" name="checklist" value="Tow Hook & Covers"> Tow Hook & Covers</label>
+
+    <label><input type="checkbox" name="checklist" value="Interior Carpet Footprint"> Interior Carpet Footprint</label>
+
+    <label><input type="checkbox" name="checklist" value="Front Passenger Seat Covers"> Front Passenger Seat Covers</label>
+
+    <label><input type="checkbox" name="checklist" value="Weekly Battery Identifier"> Weekly Battery Identifier</label>
+
+    <label><input type="checkbox" name="checklist" value="BI Pack"> BI Pack</label>
+
+    <label><input type="checkbox" name="checklist" value="Floor Carpets"> Floor Carpets</label>
+
+    <label><input type="checkbox" name="checklist" value="Tyre Repair Kit"> Tyre Repair Kit</label>
+
+    <label><input type="checkbox" name="checklist" value="Lock Nut"> Lock Nut</label>
+
+    <label><input type="checkbox" name="checklist" value="Charging Cable G45"> Charging Cable G45</label>
+
+    <label><input type="checkbox" name="checklist" value="Number Plate Carrier"> Number Plate Carrier</label>
 
 </div>
 
 <div class="form-group">
 
-<label>Damage?</label>
+    <label>Damage?</label>
 
-<select id="damage">
-
-<option>No</option>
-<option>Yes</option>
-
-</select>
+    <select id="damage">
+        <option value="No">No</option>
+        <option value="Yes">Yes</option>
+    </select>
 
 </div>
 
 <div id="damageSection">
 
-<h3>Damage Details</h3>
+    <h3>Damage Details</h3>
 
-<textarea id="comments"
-placeholder="Describe the damage..."></textarea>
+    <label>Describe the damage</label>
+    <textarea id="comments" placeholder="Describe the damage..."></textarea>
 
-<br><br>
+    <br><br>
 
-<input type="file" accept="image/*">
+    <label>Upload Damage Photograph</label>
+    <input type="file" id="damagePhoto" accept="image/*">
 
-<br><br>
+    <br><br>
 
-<label>Reject Vehicle?</label>
+    <label>Reject Vehicle?</label>
 
-<select id="reject">
-
-<option>No</option>
-<option>Yes</option>
-
-</select>
+    <select id="reject">
+        <option value="No">No</option>
+        <option value="Yes">Yes</option>
+    </select>
 
 </div>
 
 <div id="leaderSection">
 
-<h3>Production Team Leader Approval</h3>
+    <h3>Production Team Leader Approval</h3>
 
-<label>Company ID Number</label>
+    <div class="form-group">
+        <label>Company ID Number</label>
+        <input type="text" id="leaderId">
+    </div>
 
-<input type="text">
-
-<label>Signature</label>
-
-<input type="text">
+    <div class="form-group">
+        <label>Signature</label>
+        <input type="text" id="signature">
+    </div>
 
 </div>
 
 <div class="button-bar">
 
-<button
-type="button"
-class="btn end-btn"
-onclick="endInspection()">
+    <button type="button"
+            class="btn end-btn"
+            onclick="endInspection()">
+        End Inspection
+    </button>
 
-End Inspection
-
-</button>
-
-<button
-type="button"
-class="btn next-btn"
-onclick="saveVehicle()">
-
-Next
-
-</button>
+    <button type="button"
+            class="btn next-btn"
+            onclick="saveVehicle()">
+        Next →
+    </button>
 
 </div>
 
@@ -280,31 +492,28 @@ Next
 
 <div id="inspectionTable">
 
-<h2>Inspection Records</h2>
+    <h2>Inspection Records</h2>
 
-<table>
+    <p class="notice" id="recordCount"></p>
 
-<thead>
+    <table>
 
-<tr>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>VIN</th>
+                <th>Battery %</th>
+                <th>Keys</th>
+                <th>Key Cards</th>
+                <th>Destination</th>
+                <th>Damage</th>
+                <th>Rejected</th>
+            </tr>
+        </thead>
 
-<th>VIN</th>
-<th>Battery %</th>
-<th>Keys</th>
-<th>Key Cards</th>
-<th>Destination</th>
-<th>Damage</th>
-<th>Rejected</th>
+        <tbody id="tableBody"></tbody>
 
-</tr>
-
-</thead>
-
-<tbody id="tableBody">
-
-</tbody>
-
-</table>
+    </table>
 
 </div>
 
@@ -312,118 +521,234 @@ Next
 
 <script>
 
-const records=[];
+const STORAGE_KEY = "f2DamageInspectionRecords";
 
-const today=new Date();
+let records = [];
 
-document.getElementById("today").innerHTML=
-String(today.getDate()).padStart(2,'0')
-+"/"+
-String(today.getMonth()+1).padStart(2,'0')
-+"/"+
-String(today.getFullYear()).slice(-2);
+const today = new Date();
 
-document
-.getElementById("damage")
-.addEventListener("change",function(){
+document.getElementById("today").textContent =
+    String(today.getDate()).padStart(2, "0") + "/" +
+    String(today.getMonth() + 1).padStart(2, "0") + "/" +
+    String(today.getFullYear()).slice(-2);
 
-document.getElementById("damageSection")
-.style.display=
-this.value==="Yes"
-? "block"
-: "none";
+
+/* Load registered inspector information */
+
+try {
+    const inspector = JSON.parse(
+        localStorage.getItem("activeQualityInspector") || "null"
+    );
+
+    if (inspector) {
+        document.getElementById("inspectorName").textContent =
+            inspector.name || "Inspector Name";
+
+        document.getElementById("inspectorNumber").textContent =
+            inspector.employeeNumber || "Inspector Number";
+    }
+} catch (error) {
+    console.error("Inspector information could not be loaded.");
+}
+
+
+/* Load saved records */
+
+try {
+    const saved = JSON.parse(
+        localStorage.getItem(STORAGE_KEY) || "[]"
+    );
+
+    records = Array.isArray(saved) ? saved : [];
+} catch (error) {
+    records = [];
+}
+
+
+/* Show damage section */
+
+document.getElementById("damage").addEventListener("change", function() {
+
+    document.getElementById("damageSection").style.display =
+        this.value === "Yes" ? "block" : "none";
+
+    if (this.value === "No") {
+        document.getElementById("reject").value = "No";
+        document.getElementById("leaderSection").style.display = "none";
+    }
 
 });
 
-document
-.getElementById("reject")
-.addEventListener("change",function(){
 
-document.getElementById("leaderSection")
-.style.display=
-this.value==="No"
-? "block"
-: "none";
+/* Team leader approval */
+
+document.getElementById("reject").addEventListener("change", function() {
+
+    document.getElementById("leaderSection").style.display =
+        this.value === "No" ? "block" : "none";
 
 });
 
-function saveVehicle(){
 
-let vin=document.getElementById("vin").value;
-let battery=document.getElementById("battery").value;
-let keys=document.getElementById("keys").value;
-let cards=document.getElementById("cards").value;
-let destination=document.getElementById("destination").value;
+/* Escape text before inserting it into the table */
 
-let damage=document.getElementById("damage").value;
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, function(char) {
+        return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        }[char];
+    });
+}
 
-let reject=
-document.getElementById("reject")
-? document.getElementById("reject").value
-: "No";
 
-records.push({
-vin,
-battery,
-keys,
-cards,
-destination,
-damage,
-reject
-});
+/* Save vehicle */
 
-document.getElementById("inspectionForm").reset();
+function saveVehicle() {
 
-document.getElementById("damageSection").style.display="none";
-document.getElementById("leaderSection").style.display="none";
+    const form = document.getElementById("inspectionForm");
 
-alert("Vehicle saved. Start next inspection.");
+    if (!form.reportValidity()) {
+        return;
+    }
+
+    const damage = document.getElementById("damage").value;
+    const reject = damage === "Yes"
+        ? document.getElementById("reject").value
+        : "No";
+
+    const record = {
+
+        id: Date.now().toString(),
+
+        date: new Date().toISOString().slice(0, 10),
+
+        vin: document.getElementById("vin").value.trim(),
+
+        battery: document.getElementById("battery").value,
+
+        keys: document.getElementById("keys").value,
+
+        cards: document.getElementById("cards").value,
+
+        destination: document.getElementById("destination").value,
+
+        damage: damage,
+
+        comments: damage === "Yes"
+            ? document.getElementById("comments").value
+            : "",
+
+        reject: reject,
+
+        checklist: Array.from(
+            document.querySelectorAll('input[name="checklist"]:checked')
+        ).map(item => item.value),
+
+        photoName: document.getElementById("damagePhoto").files[0]?.name || "",
+
+        leaderId: document.getElementById("leaderId").value,
+
+        signature: document.getElementById("signature").value
+
+    };
+
+    records.push(record);
+
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    } catch (error) {
+        records.pop();
+        alert("Unable to save this record. Browser storage may be full.");
+        return;
+    }
+
+    alert("Vehicle inspection saved successfully.");
+
+    form.reset();
+
+    document.getElementById("damageSection").style.display = "none";
+    document.getElementById("leaderSection").style.display = "none";
+
+    displayRecords();
 
 }
 
-function endInspection(){
 
-let tbody=document.getElementById("tableBody");
+/* Display saved inspection records */
 
-tbody.innerHTML="";
+function displayRecords() {
 
-records.forEach(r=>{
+    const table = document.getElementById("inspectionTable");
+    const tbody = document.getElementById("tableBody");
 
-let row=document.createElement("tr");
+    if (records.length === 0) {
+        table.style.display = "none";
+        return;
+    }
 
-if(r.reject==="Yes"){
-row.classList.add("reject-row");
+    table.style.display = "block";
+    tbody.innerHTML = "";
+
+    records.forEach(record => {
+
+        const row = document.createElement("tr");
+
+        if (record.reject === "Yes") {
+            row.classList.add("reject-row");
+        }
+        else if (record.damage === "Yes") {
+            row.classList.add("damage-row");
+        }
+
+        row.innerHTML = `
+            <td>${escapeHTML(record.date)}</td>
+            <td>${escapeHTML(record.vin)}</td>
+            <td>${escapeHTML(record.battery)}</td>
+            <td>${escapeHTML(record.keys)}</td>
+            <td>${escapeHTML(record.cards)}</td>
+            <td>${escapeHTML(record.destination)}</td>
+            <td>${escapeHTML(record.damage)}</td>
+            <td>${escapeHTML(record.reject)}</td>
+        `;
+
+        tbody.appendChild(row);
+
+    });
+
+    document.getElementById("recordCount").textContent =
+        "Total saved inspections: " + records.length;
+
 }
-else if(r.damage==="Yes"){
-row.classList.add("damage-row");
-}
 
-row.innerHTML=`
 
-<td>${r.vin}</td>
-<td>${r.battery}</td>
-<td>${r.keys}</td>
-<td>${r.cards}</td>
-<td>${r.destination}</td>
-<td>${r.damage}</td>
-<td>${r.reject}</td>
+/* End inspection */
 
-`;
+function endInspection() {
 
-tbody.appendChild(row);
+    if (records.length === 0) {
+        alert("No inspection records have been saved yet.");
+        return;
+    }
 
-});
+    displayRecords();
 
-document
-.getElementById("inspectionTable")
-.style.display="block";
+    window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth"
+    });
 
-window.scrollTo(
-0,
-document.body.scrollHeight
-);
+    alert("Inspection session completed.");
 
 }
+
+
+/* Display previously saved records on page load */
+
+displayRecords();
 
 </script>
 
